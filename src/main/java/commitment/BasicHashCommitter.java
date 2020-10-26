@@ -22,7 +22,7 @@ public class BasicHashCommitter implements Committer {
 	}
 
 	@Override
-	public Commitment commit(byte[] message) {
+	public HashCommitment commit(byte[] message) {
 		byte[] nonce = new byte[32];
 		new SecureRandom().nextBytes(nonce);
 		byte[] adding = calculateAdding(message, nonce);
@@ -30,7 +30,7 @@ public class BasicHashCommitter implements Committer {
 		byte[] commitment = digest.digest(adding);
 		
 		
-		return new Commitment(nonce, commitment);
+		return new HashCommitment(nonce, commitment, message);
 	}
 
 	@Override
