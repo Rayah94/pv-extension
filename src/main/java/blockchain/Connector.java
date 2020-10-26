@@ -1,6 +1,7 @@
 package blockchain;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import org.web3j.crypto.Bip32ECKeyPair;
 import org.web3j.crypto.Credentials;
@@ -8,7 +9,10 @@ import org.web3j.crypto.MnemonicUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.utils.Convert;
+
+import contracts.generated.PVContract;
 
 public class Connector {
 	
@@ -49,7 +53,13 @@ public class Connector {
 		return result;
 	}
 	
-	//TODO implement loading a the contract
+	public PVContract deployContract(BigInteger numberOfParticipants, BigInteger timeOffset) throws Exception {
+		return PVContract.deploy(web3j, accountCredentials, new DefaultGasProvider(), numberOfParticipants, timeOffset).send();
+	}
+	
+	public PVContract loadContract(String address) {
+		return PVContract.load(address, web3j, accountCredentials, new DefaultGasProvider());
+	}
 	
 	public Credentials getAccountCredentials() {
 		return accountCredentials;
