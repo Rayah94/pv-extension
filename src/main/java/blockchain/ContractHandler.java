@@ -14,10 +14,14 @@ public class ContractHandler {
 	private Connector connector;
 	private PVContract contract;
 	
-	public ContractHandler(Connector connector, BigInteger numberOfParticipants, BigInteger timeOffset) {
+	private BigInteger numberOfParticipants;
+	
+	
+	public ContractHandler(Connector connector, BigInteger numberOfParticipants, BigInteger sessions, BigInteger timeOffset) {
 		this.connector = connector;
 		try {
-			contract = connector.deployContract(numberOfParticipants, timeOffset);
+			contract = connector.deployContract(numberOfParticipants, sessions, timeOffset);
+			this.numberOfParticipants = numberOfParticipants;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -26,6 +30,11 @@ public class ContractHandler {
 	public ContractHandler(Connector connector, String address) {
 		this.connector = connector;
 		contract = connector.loadContract(address);
+		try {
+			numberOfParticipants = contract.n().send();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public TransactionReceipt init() {
@@ -45,10 +54,10 @@ public class ContractHandler {
 		return txReceipt;
 	}
 	
-	public TransactionReceipt commitChallenge(byte[] commit, BigInteger session) {
+	public TransactionReceipt commitChallenge(byte[] commit) {
 		TransactionReceipt txReceipt = null;
 		try {
-			TransactionReceipt receipt = contract.commitChallenge(commit, session).send();
+			TransactionReceipt receipt = contract.commitChallenge(commit).send();
 			String txHash = receipt.getTransactionHash();
 			
 			TransactionReceiptProcessor receiptProcessor =
@@ -79,10 +88,10 @@ public class ContractHandler {
 		return txReceipt;
 	}
 	
-	public TransactionReceipt openChallenge(byte[] open, byte[] secret, BigInteger session) {
+	public TransactionReceipt openChallenge(String open, byte[] secret) {
 		TransactionReceipt txReceipt = null;
 		try {
-			TransactionReceipt receipt = contract.openChallenge(open, secret, session).send();
+			TransactionReceipt receipt = contract.openChallenge(open, secret).send();
 			String txHash = receipt.getTransactionHash();
 			
 			TransactionReceiptProcessor receiptProcessor =
@@ -96,7 +105,7 @@ public class ContractHandler {
 		return txReceipt;
 	}
 	
-	public TransactionReceipt openSeed(byte[] open, byte[] secret, BigInteger session) {
+	public TransactionReceipt openSeed(String open, byte[] secret, BigInteger session) {
 		TransactionReceipt txReceipt = null;
 		try {
 			TransactionReceipt receipt = contract.openSeed(open, secret, session).send();
@@ -113,8 +122,25 @@ public class ContractHandler {
 		return txReceipt;
 	}
 	
+	public void getChallenges() {
+		int n = numberOfParticipants.intValueExact();
+		String[] challenges = new String[n];
+		
+		for (Integer i = 0; i < n; i++) {
+			try {
+				challenges[i] = contract.challengeCommitments(contract.adresses(new BigInteger(i.toString())).send()).send().component2();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public String getContractAddress() {
 		return contract.getContractAddress();
+	}
+	
+	public PVContract getContract() {
+		return contract;
 	}
 
 }

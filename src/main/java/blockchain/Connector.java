@@ -53,8 +53,8 @@ public class Connector {
 		return result;
 	}
 	
-	public PVContract deployContract(BigInteger numberOfParticipants, BigInteger timeOffset) throws Exception {
-		return PVContract.deploy(web3j, accountCredentials, new DefaultGasProvider(), numberOfParticipants, timeOffset).send();
+	public PVContract deployContract(BigInteger numberOfParticipants, BigInteger sessions, BigInteger timeOffset) throws Exception {
+		return PVContract.deploy(web3j, accountCredentials, new DefaultGasProvider(), numberOfParticipants, sessions, timeOffset).send();
 	}
 	
 	public PVContract loadContract(String address) {

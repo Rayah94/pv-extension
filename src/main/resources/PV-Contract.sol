@@ -3,68 +3,94 @@ pragma solidity ^0.5.6;
 contract PVContract {
 
 	mapping(address => bool) public participants;
-	uint32 n;
+	address[] public adresses;
+	uint32 public n;
 	
 	uint32 phase;
-	uint32 calls;
+	uint calls;
+	uint call;
 	uint blocknumber;
 	uint offset;
+	uint t;
 	
-	mapping(address => Commitment[]) public seedCommitments;
-	mapping(address => Commitment[]) public challengeCommitments;
+	
+	mapping(address => mapping(uint256 => Commitment)) public seedCommitments;
+	mapping(address => Commitment) public challengeCommitments;
 	
 	struct Commitment {
 	    bytes32 commit;
-	    bytes32 open;
+	    string open;
 	    bytes32 secret;
 	}
 	
-	constructor(uint32 numberOfParticipants, uint timeOffset) public {
+	constructor(uint32 numberOfParticipants, uint sessions, uint timeOffset) public {
 	    n = numberOfParticipants;
 	    blocknumber = block.number;
 	    phase = 0;
-	    calls = 0;
+	    calls = n;
+	    call = 0;
 	    offset = timeOffset;
+	    t = sessions;
 	}
 	
 	function init() public beforeTimeout{
 	    require(phase == 0, "Not in the right phase");
 	    participants[msg.sender] = true;
+	    adresses[call] = msg.sender;
         checkCalls();
 	}
 	
-	function commitChallenge(bytes32 commit, uint session) public isParticipant beforeTimeout{
+	function commitChallenge(bytes32 commit) public isParticipant beforeTimeout{
 	    require(phase == 1, "Not in the right phase");
-	    challengeCommitments[msg.sender][session].commit = commit;
+
+	    Commitment storage commitment = challengeCommitments[msg.sender];
+	    commitment.commit = commit;
+	    
 	    checkCalls();
 	}
 	
 	function commitSeed(bytes32 commit, uint session) public isParticipant beforeTimeout{
 	    require(phase == 2, "Not in the right phase");
-	    seedCommitments[msg.sender][session].commit = commit;
+
+	    mapping(uint256 => Commitment) storage addressMapping = seedCommitments[msg.sender];
+	    Commitment storage commitment = addressMapping[session];
+	    commitment.commit = commit;
+	    
 	    checkCalls();
 	}
 	
-	function openChallenge(bytes32 open, bytes32 secret, uint session) public isParticipant beforeTimeout{
+	function openChallenge(string memory open, bytes32 secret) public isParticipant beforeTimeout{
 	    require(phase == 3, "Not in the right phase");
-	    challengeCommitments[msg.sender][session].open = open;
-	    challengeCommitments[msg.sender][session].secret = secret;
+	    
+	    Commitment storage commitment = challengeCommitments[msg.sender];
+	    commitment.open = open;
+	    commitment.secret = secret;
+	    
 	    checkCalls();
 	}
 	
-	function openSeed(bytes32 open, bytes32 secret, uint session) public isParticipant beforeTimeout{
+	function openSeed(string memory open, bytes32 secret, uint session) public isParticipant beforeTimeout{
 	    require(phase == 4, "Not in the right phase");
-	    seedCommitments[msg.sender][session].open = open;
-	    seedCommitments[msg.sender][session].secret = secret;
+	    
+	    mapping(uint256 => Commitment) storage addressMapping = seedCommitments[msg.sender];
+	    Commitment storage commitment = addressMapping[session];
+	    commitment.open = open;
+	    commitment.secret = secret;
+	    
 	    checkCalls();
 	}
 	
 	function checkCalls() private {
-	    calls++;
-	    if(calls >= n) {
+	    call++;
+	    if(call >= calls) {
 	        phase++;
-	        calls = 0;
+	        call = 0;
 	        blocknumber = block.number;
+	        if(phase == 2 || phase == 4) {
+	            calls = n * t;
+	        } else {
+	            calls = n;
+	        }
 	    }
 	}
 	

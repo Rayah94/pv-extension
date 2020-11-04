@@ -1,5 +1,6 @@
 package io;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -15,6 +16,7 @@ public class TranscriptWriter {
 	public TranscriptWriter(String transcriptname) {
 		
 		try {
+			File file = new File(System.getProperty("user.dir") + "\\src\\main\\resources\\transcripts\\" + transcriptname);
 			fileWriter = new FileWriter(System.getProperty("user.dir") + "\\src\\main\\resources\\transcripts\\" + transcriptname);
 			exists = true;
 		} catch (IOException e) {

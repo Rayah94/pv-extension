@@ -4,17 +4,17 @@ import org.bouncycastle.crypto.Commitment;
 
 public class HashCommitment extends Commitment {
 	
-	private byte[] message;
+	private String message;
 
-	public HashCommitment(byte[] secret, byte[] commitment, byte[] message) {
+	public HashCommitment(byte[] secret, byte[] commitment) {
 		super(secret, commitment);
 	}
 
-	public byte[] getMessage() {
+	public String getMessage() {
 		return message;
 	}
 
-	public void setMessage(byte[] message) {
+	public void setMessage(String message) {
 		this.message = message;
 	}
 

@@ -29,8 +29,7 @@ public class BasicHashCommitter implements Committer {
 		
 		byte[] commitment = digest.digest(adding);
 		
-		
-		return new HashCommitment(nonce, commitment, message);
+		return new HashCommitment(nonce, commitment);
 	}
 
 	@Override
