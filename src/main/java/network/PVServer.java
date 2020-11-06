@@ -11,10 +11,10 @@ public class PVServer {
 
     public static void main(String[] args) throws IOException {
         
-        if (args.length != 1) {
+        /*if (args.length != 1) {
             System.err.println("Usage: java PVServer <port number>");
             System.exit(1);
-        }
+        }*/
 
         //int portNumber = Integer.parseInt(args[0]);
         int portNumber = 4444;
@@ -32,13 +32,12 @@ public class PVServer {
                 
                 // Initiate conversation with client
                 PVProtocol pvp = new PVProtocol();
-                outputLine = pvp.processInput(null);
-                out.println(outputLine);
+                out.println("Connected!");
 
                 while ((inputLine = in.readLine()) != null) {
                     outputLine = pvp.processInput(inputLine);
                     out.println(outputLine);
-                    if (outputLine.equals("Bye."))
+                    if (outputLine.equals("Protocol finnished"))
                         break;
                 }
             } catch (IOException e) {
