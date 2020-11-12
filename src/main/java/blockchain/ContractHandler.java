@@ -122,17 +122,19 @@ public class ContractHandler {
 		return txReceipt;
 	}
 	
-	public void getChallenges() {
+	public String[] getChallenges() {
 		int n = numberOfParticipants.intValueExact();
 		String[] challenges = new String[n];
 		
 		for (Integer i = 0; i < n; i++) {
 			try {
 				challenges[i] = contract.challengeCommitments(contract.adresses(new BigInteger(i.toString())).send()).send().component2();
+				System.out.println(challenges[i]);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+		return challenges;
 	}
 	
 	public String getContractAddress() {

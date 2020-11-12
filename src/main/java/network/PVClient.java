@@ -18,8 +18,9 @@ public class PVClient {
 	private static final int COMMIT_SEED = 2;
 	private static final int TRANSCRIPT_WRITING = 3;
 	private static final int OPEN_CHALLENGE = 4;
-	private static final int OPEN_SEED = 5;
-	private static final int FINNISHED = 6;
+	private static final int RETURN_CHALLENGE = 5;
+	private static final int OPEN_SEED = 6;
+	private static final int FINNISHED = 7;
 	
 	private static final String INPUT_DIVIDER = ";";
 	private static final String ARRAY_DIVIDER = ",";
@@ -77,7 +78,7 @@ public class PVClient {
 	private static String nextStep() {
 		String password = "1234";
 		String mnemonic = "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat";
-		String contractAddress = "";
+		String contractAddress = "0xbfa021d5c973d0a3c5ab9a4d6605689ab3af50ca";
 		String transcriptPre = "test";
 		String sessions = "1";
 		String challenge = "1";
@@ -90,7 +91,8 @@ public class PVClient {
 		case COMMIT_CHALLENGE: state = COMMIT_SEED; committer = new BasicHashCommitter(); commitment = committer.commit(challenge.getBytes(StandardCharsets.UTF_8)); return commitment.toString(INPUT_DIVIDER, ARRAY_DIVIDER).split(INPUT_DIVIDER)[0];
 		case COMMIT_SEED: state = TRANSCRIPT_WRITING; committer = new BasicHashCommitter(); commitment = committer.commit(seed.getBytes(StandardCharsets.UTF_8)); return sessions + INPUT_DIVIDER + commitment.toString(INPUT_DIVIDER, ARRAY_DIVIDER).split(INPUT_DIVIDER)[0];
 		case TRANSCRIPT_WRITING: state = OPEN_CHALLENGE; return sessions + INPUT_DIVIDER + "bvalblab";
-		case OPEN_CHALLENGE: state = OPEN_SEED; committer = new BasicHashCommitter(); commitment = committer.commit(challenge.getBytes(StandardCharsets.UTF_8)); return commitment.toString(INPUT_DIVIDER, ARRAY_DIVIDER).split(INPUT_DIVIDER)[2] + INPUT_DIVIDER + commitment.toString(INPUT_DIVIDER, ARRAY_DIVIDER).split(INPUT_DIVIDER)[1];
+		case OPEN_CHALLENGE: state = RETURN_CHALLENGE; committer = new BasicHashCommitter(); commitment = committer.commit(challenge.getBytes(StandardCharsets.UTF_8)); commitment.setMessage(challenge); return commitment.toString(INPUT_DIVIDER, ARRAY_DIVIDER).split(INPUT_DIVIDER)[2] + INPUT_DIVIDER + commitment.toString(INPUT_DIVIDER, ARRAY_DIVIDER).split(INPUT_DIVIDER)[1];
+		case RETURN_CHALLENGE: state = OPEN_SEED; return "";
 		case OPEN_SEED: state = FINNISHED; committer = new BasicHashCommitter(); commitment = committer.commit(seed.getBytes(StandardCharsets.UTF_8)); return sessions + INPUT_DIVIDER + commitment.toString(INPUT_DIVIDER, ARRAY_DIVIDER).split(INPUT_DIVIDER)[2] + INPUT_DIVIDER + commitment.toString(INPUT_DIVIDER, ARRAY_DIVIDER).split(INPUT_DIVIDER)[1];
 		case FINNISHED:
 		default: return "Ende";

@@ -15,8 +15,9 @@ public class PVProtocol {
 	private static final int COMMIT_SEED = 2;
 	private static final int TRANSCRIPT_WRITING = 3;
 	private static final int OPEN_CHALLENGE = 4;
-	private static final int OPEN_SEED = 5;
-	private static final int FINNISHED = 6;
+	private static final int RETURN_CHALLENGE = 5;
+	private static final int OPEN_SEED = 6;
+	private static final int FINNISHED = 7;
 	
 	private static final String INPUT_DIVIDER = ";";
 	private static final String ARRAY_DIVIDER = ",";
@@ -43,8 +44,9 @@ public class PVProtocol {
 		case COMMIT_CHALLENGE: result = commitChallenge(theInput).toString(); state = COMMIT_SEED; break; // challenge (nur com(challenge))
 		case COMMIT_SEED: result = commitSeed(theInput).toString(); currentRound++; state = currentRound <= numberSessions ? COMMIT_SEED : TRANSCRIPT_WRITING; break; // session, seed (nur com(seed))
 		case TRANSCRIPT_WRITING: writeTranscript(theInput); result = "written"; state = OPEN_CHALLENGE; currentRound = 0; break; // session, message in a formatted way
-		case OPEN_CHALLENGE: result = openChallenge(theInput).toString(); state = OPEN_SEED; break; // challenge, secret
-		case OPEN_SEED: result = openSeed(theInput).toString(); currentRound++; state = currentRound <= numberSessions ? OPEN_SEED : FINNISHED; break; // session, seed, secret
+		case OPEN_CHALLENGE: result = openChallenge(theInput).toString(); state = RETURN_CHALLENGE; break; // challenge, secret
+		case RETURN_CHALLENGE: result = returnChallenge(); state = OPEN_SEED; break; // return challenge session e
+		case OPEN_SEED: result = openSeed(theInput).toString(); currentRound++; state = currentRound < numberSessions ? OPEN_SEED : FINNISHED; break; // session, seed, secret+
 		case FINNISHED: result = "Protocol finnished"; break;
 		}
 		
@@ -107,6 +109,17 @@ public class PVProtocol {
 		}
 		
 		return handler.openChallenge(inputs[0], secret);
+	}
+	
+	private String returnChallenge() {
+		String[] challenges = handler.getChallenges();
+		int result = 0;
+		for(int i = 0; i < challenges.length; i++) {
+			System.out.println(challenges[i]);
+			result += Integer.parseInt(challenges[i]);
+		}
+		result = result % numberSessions;
+		return "" + result;
 	}
 	
 	private TransactionReceipt openSeed(String input) {

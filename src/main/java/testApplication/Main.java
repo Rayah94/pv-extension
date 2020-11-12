@@ -1,11 +1,16 @@
 package testApplication;
 
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+
 import blockchain.Connector;
 import blockchain.ContractHandler;
+import commitment.BasicHashCommitter;
+import commitment.HashCommitment;
 
 public class Main {
 
+	// geth --datadir test-chain-dir --rpc --dev --rpcapi "eth,net,web3,personal,miner"
 	public static void main(String[] args) {
 		
 		String password = "1234";
@@ -16,7 +21,8 @@ public class Main {
 		
 		System.out.println(handler.getContractAddress());
 		
-		/*String challenge = "3";
+		/*BasicHashCommitter committer = new BasicHashCommitter();
+		String challenge = "3";
 		HashCommitment commitmentChallenge = committer.commit(challenge.getBytes(StandardCharsets.UTF_8));
 		commitmentChallenge.setMessage(challenge);
 		
@@ -29,7 +35,7 @@ public class Main {
 		
 		commitmentSeed.setMessage(seed);
 		
-		/*handler.init();
+		handler.init();
 		
 		handler.commitChallenge(commitmentChallenge.getCommitment());
 		
@@ -37,7 +43,7 @@ public class Main {
 		
 		handler.openChallenge(commitmentChallenge.getMessage(), commitmentChallenge.getSecret());
 		
-		handler.openSeed(commitmentSeed.getMessage(), commitmentSeed.getSecret(), new BigInteger("1"));*/
+		handler.openSeed(commitmentSeed.getMessage(), commitmentSeed.getSecret(), new BigInteger("1"));//*/
 
 	}
 

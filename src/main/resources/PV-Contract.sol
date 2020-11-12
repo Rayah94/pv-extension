@@ -31,6 +31,7 @@ contract PVContract {
 	    call = 0;
 	    offset = timeOffset;
 	    t = sessions;
+	    adresses.length = n;
 	}
 	
 	function init() public beforeTimeout{
