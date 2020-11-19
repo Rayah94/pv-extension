@@ -7,11 +7,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
+import java.util.Random;
 
 import commitment.BasicHashCommitter;
 import commitment.HashCommitment;
 
-public class PVClient {
+public class PVClient implements Runnable {
 	
 	private static final int INIT = 0;
 	private static final int COMMIT_CHALLENGE = 1;
@@ -27,32 +28,125 @@ public class PVClient {
 	
 	private static int state = INIT;
 	
-	public static void main(String[] args) throws IOException {
-         
-	        /*if (args.length != 2) {
-	            System.err.println(
-	                "Usage: java EchoClient <host name> <port number>");
-	            System.exit(1);
-	        }*/
-	 
-	        //String hostName = args[0];
-	        //int portNumber = Integer.parseInt(args[1]);
-	        String hostName = null;
-	        int portNumber = 4444;
+	private int portNumberPV;
+	private String hostNamePV;
+	
+	private int portNumberMsg;
+	private String hostNameMsg;
+	
+	private int clientNumber;
+	private String contractAddress;
+	
+	private String mnemonic;
+	private String password;
+	
+	int numberOfParticipants;
+	int numberOfSessions;
+	
+	private String transcriptPre;
+	
+	
+	private HashCommitment challengeCommitment;
+	private HashCommitment[] seedCommitments;
+	
+	public PVClient(int clientNumber, String mnemonic, String password, String contractAddress, int numberOfParticipants, int numberOfSessions, int portNumberPV, String hostNamePV, int portNumberMsg, String hostNameMsg) {
+		this.clientNumber = clientNumber;
+		this.mnemonic = mnemonic;
+		this.password = password;
+		this.contractAddress = contractAddress;
+		this.numberOfParticipants = numberOfParticipants;
+		this.numberOfSessions = numberOfSessions;
+		this.portNumberPV = portNumberPV;
+		this.hostNamePV = hostNamePV;
+		this.portNumberMsg = portNumberMsg;
+		this.hostNameMsg = hostNameMsg;
+		this.transcriptPre = "test" + clientNumber;
+	}
+	
+	public void run() {       
+	        // start own PVServer
+	        Runnable pvServer = new PVServer(portNumberPV);
+	        Thread server = new Thread(pvServer);
+	        server.start();
 	 
 	        try (
-	            Socket pvSocket = new Socket(hostName, portNumber);
-	            PrintWriter out = new PrintWriter(pvSocket.getOutputStream(), true);
-	            BufferedReader in = new BufferedReader(
+	        	// connect to PVServer
+	            Socket pvSocket = new Socket(hostNamePV, portNumberPV);
+	            PrintWriter outPV = new PrintWriter(pvSocket.getOutputStream(), true);
+	            BufferedReader inPV = new BufferedReader(
 	                new InputStreamReader(pvSocket.getInputStream()));
+	        		
+	        	// connect to MsgServer
+	        	Socket msgSocket = new Socket(hostNameMsg, portNumberMsg);
+	        	PrintWriter outMsg = new PrintWriter(msgSocket.getOutputStream(), true);
+	        	BufferedReader inMsg = new BufferedReader(
+	        		new InputStreamReader(msgSocket.getInputStream()));
 	        ) {
+	        	System.out.println("Client" + clientNumber + " got from PVServer: " + inPV.readLine());
+	        	System.out.println("Client" + clientNumber + " got from MsgServer: " + inMsg.readLine());
+	        	
+	        	// send init to PVserver
+	        	String fromClient = mnemonic + INPUT_DIVIDER + password + INPUT_DIVIDER + contractAddress + INPUT_DIVIDER + transcriptPre + INPUT_DIVIDER + numberOfSessions;
+	        	System.out.println("Client" + clientNumber + " sending to PVServer: " + fromClient);
+	        	outPV.println(fromClient);
+	        	System.out.println("Client" + clientNumber + " got from PVServer: " + inPV.readLine());
+	        	
+	        	// sample challenge and send to PVserver
+	        	challengeCommitment = sampleChallenge();
+	        	fromClient = challengeCommitment.toString(INPUT_DIVIDER, ARRAY_DIVIDER).split(INPUT_DIVIDER)[0];
+	        	System.out.println("Client" + clientNumber + " sending to PVServer: " + fromClient);
+	        	outPV.println(fromClient);
+	        	System.out.println("Client" + clientNumber + " got from PVServer: " + inPV.readLine());
+	        	
+	        	// sample seed and send to PVserver
+	        	seedCommitments = sampleSeeds();
+	        	for(int i = 0; i < this.numberOfSessions; i++) {
+	        		fromClient = i + INPUT_DIVIDER + seedCommitments[i].toString(INPUT_DIVIDER, ARRAY_DIVIDER).split(INPUT_DIVIDER)[0];
+	        		System.out.println("Client" + clientNumber + " sending to PVServer: " + fromClient);
+		        	outPV.println(fromClient);
+		        	System.out.println("Client" + clientNumber + " got from PVServer: " + inPV.readLine());
+	        	}
+	        	
+	        	// do jointly for each session x times of interaction with the other parties
+	        	//TODO
+	        	// check transcript of others
+	        	//TODO
+	        	// sign Transcript + session + contract Address
+	        	//TODO
+	        	// open challenge commitments
+	        	fromClient = challengeCommitment.toString(INPUT_DIVIDER, ARRAY_DIVIDER).split(INPUT_DIVIDER)[2] + INPUT_DIVIDER + challengeCommitment.toString(INPUT_DIVIDER, ARRAY_DIVIDER).split(INPUT_DIVIDER)[1];
+	        	System.out.println("Client" + clientNumber + " sending to PVServer: " + fromClient);
+	        	outPV.println(fromClient);
+	        	System.out.println("Client" + clientNumber + " got from PVServer: " + inPV.readLine());
+	        	
+	        	// receive challenge
+	        	fromClient = "Receive challenge";
+	        	System.out.println("Client" + clientNumber + " sending to PVServer: " + fromClient);
+	        	outPV.println(fromClient);
+	        	String challenge = inPV.readLine();
+	        	System.out.println("Client" + clientNumber + " got from PVServer: " + challenge);
+	        	int calcSession = Integer.parseInt(challenge);
+	        	
+	        	// open seeds for all sessions except challenge session
+	        	for(int i = 0; i < this.numberOfSessions; i++) {
+	        		if(i != calcSession) {
+	        			fromClient = i + INPUT_DIVIDER + seedCommitments[i].toString(INPUT_DIVIDER, ARRAY_DIVIDER).split(INPUT_DIVIDER)[2] + INPUT_DIVIDER + seedCommitments[i].toString(INPUT_DIVIDER, ARRAY_DIVIDER).split(INPUT_DIVIDER)[1];
+	        			System.out.println("Client" + clientNumber + " sending to PVServer: " + fromClient);
+			        	outPV.println(fromClient);
+			        	System.out.println("Client" + clientNumber + " got from PVServer: " + inPV.readLine());
+	        		}
+	        	}
+	        	
+	        	
+	        	
+	        	
 	            BufferedReader stdIn =
 	                new BufferedReader(new InputStreamReader(System.in));
 	            String fromServer;
 	            String fromUser;
 	            String console;
 	 
-	            while ((fromServer = in.readLine()) != null) {
+	            while ((fromServer = inPV.readLine()) != null) {
 	                System.out.println("Server: " + fromServer);
 	                if (fromServer.equals("Protocol finnished"))
 	                    break;
@@ -62,18 +156,42 @@ public class PVClient {
 	                if (fromUser != null) {
 	                    System.out.println("Client: " + fromUser);
 	                    System.out.println("Console: " + console);
-	                    out.println(fromUser);
+	                    outPV.println(fromUser);
 	                }
 	            }
 	        } catch (UnknownHostException e) {
-	            System.err.println("Don't know about host " + hostName);
+	            System.err.println("Don't know about host " + hostNamePV);
 	            System.exit(1);
 	        } catch (IOException e) {
 	            System.err.println("Couldn't get I/O for the connection to " +
-	                hostName);
+	                hostNamePV);
 	            System.exit(1);
 	        }
 	 }
+	
+	private HashCommitment sampleChallenge() {
+		Random random = new Random();
+		int challenge = random.nextInt(this.numberOfSessions);
+		
+		BasicHashCommitter committer = new BasicHashCommitter();
+		HashCommitment commit = committer.commit(("" + challenge).getBytes(StandardCharsets.UTF_8));
+		commit.setMessage("" + challenge);
+		return commit;
+	}
+	
+	private HashCommitment[] sampleSeeds() {
+		Random random = new Random();
+		HashCommitment[] commits = new HashCommitment[this.numberOfSessions];
+		BasicHashCommitter committer = new BasicHashCommitter();
+		
+		for(int i = 0; i < this.numberOfSessions; i++) {
+			int seed = random.nextInt();
+			commits[i] = committer.commit(("" + seed).getBytes(StandardCharsets.UTF_8));
+			commits[i].setMessage("" + seed);
+		}
+		
+		return commits;
+	}
 	
 	private static String nextStep() {
 		String password = "1234";

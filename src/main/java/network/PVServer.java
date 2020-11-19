@@ -7,17 +7,14 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class PVServer {
+public class PVServer implements Runnable {
+	int portNumber;
+	
+	public PVServer(int portNumber) {
+		this.portNumber = portNumber;
+	}
 
-    public static void main(String[] args) throws IOException {
-        
-        /*if (args.length != 1) {
-            System.err.println("Usage: java PVServer <port number>");
-            System.exit(1);
-        }*/
-
-        //int portNumber = Integer.parseInt(args[0]);
-        int portNumber = 4444;
+    public void run() {
         
         try ( 
                 ServerSocket serverSocket = new ServerSocket(portNumber);
