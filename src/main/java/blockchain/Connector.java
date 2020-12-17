@@ -9,8 +9,9 @@ import org.web3j.crypto.MnemonicUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.http.HttpService;
-import org.web3j.tx.gas.DefaultGasProvider;
+import org.web3j.tx.gas.StaticGasProvider;
 import org.web3j.utils.Convert;
+import org.web3j.utils.Convert.Unit;
 
 import contracts.generated.PVContract;
 
@@ -19,8 +20,11 @@ public class Connector {
 	private Credentials accountCredentials;
 	private Web3j web3j;
 	
+	public BigDecimal balance;
+	
 	public Connector(String mnemonic, String password) {
 		initiate(mnemonic, password);
+		balance = this.getBalance(Unit.GWEI);
 	}
 	
 	public Connector() {
@@ -52,11 +56,11 @@ public class Connector {
 	}
 	
 	public PVContract deployContract(BigInteger numberOfParticipants, BigInteger sessions, BigInteger timeOffset) throws Exception {
-		return PVContract.deploy(web3j, accountCredentials, new DefaultGasProvider(), numberOfParticipants, sessions, timeOffset).send();
+		return PVContract.deploy(web3j, accountCredentials, new StaticGasProvider(new BigInteger("400000"), new BigInteger("8000000")), numberOfParticipants, sessions, timeOffset).send();
 	}
 	
 	public PVContract loadContract(String address) {
-		return PVContract.load(address, web3j, accountCredentials, new DefaultGasProvider());
+		return PVContract.load(address, web3j, accountCredentials, new StaticGasProvider(new BigInteger("400000"), new BigInteger("8000000")));
 	}
 	
 	public Credentials getAccountCredentials() {

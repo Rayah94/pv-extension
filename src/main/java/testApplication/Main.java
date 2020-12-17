@@ -3,6 +3,7 @@ package testApplication;
 import java.math.BigInteger;
 
 import org.web3j.tx.gas.DefaultGasProvider;
+import org.web3j.tx.gas.StaticGasProvider;
 
 import blockchain.Connector;
 import blockchain.ContractHandler;
@@ -31,9 +32,12 @@ public class Main {
 		String mnemonic9 = "crumble sweet treat candy maple cake sugar pudding cream honey rich smooth ";
 		String mnemonic10 = "sweet treat candy maple cake sugar pudding cream honey rich smooth crumble";
 		Connector connector = new Connector(mnemonic, password);
+		
+		
 		//System.out.println(connector.getAccountCredentials().getAddress());
 
-		ContractHandler handler = new ContractHandler(connector, new BigInteger("3"), new BigInteger("3"), new BigInteger("100"));
+		
+		ContractHandler handler = new ContractHandler(connector, new BigInteger("3"), new BigInteger("10"), new BigInteger("100"));
 		
 		System.out.println(handler.getContractAddress());
 		
@@ -42,9 +46,9 @@ public class Main {
 		
 		int[] msgPorts = {4445, 4447, 4449};
 		
-		Runnable client1 = new PVClient(0, mnemonic1, password, address, 3, 3, 4444, null, 4445, null);
-		Runnable client2 = new PVClient(1, mnemonic2, password, address, 3, 3, 4446, null, 4447, null);
-		Runnable client3 = new PVClient(2, mnemonic3, password, address, 3, 3, 4448, null, 4449, null);
+		Runnable client1 = new PVClient(0, mnemonic1, password, address, 3, 10, 4444, null, 4445, null);
+		Runnable client2 = new PVClient(1, mnemonic2, password, address, 3, 10, 4446, null, 4447, null);
+		Runnable client3 = new PVClient(2, mnemonic3, password, address, 3, 10, 4448, null, 4449, null);
 		/*
 		 * Runnable client4 = new PVClient(3, mnemonic4, password, address, 3, 3, 4450, null, 4451, null);
 		 * Runnable client5 = new PVClient(4, mnemonic5, password, address, 3, 3, 4452, null, 4453, null);
@@ -67,7 +71,7 @@ public class Main {
 		clientThread1.start();
 		clientThread2.start();
 		clientThread3.start();
-		//
+		//*/
 	}
 
 }

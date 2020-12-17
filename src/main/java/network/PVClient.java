@@ -201,6 +201,7 @@ public class PVClient implements Runnable {
 	        	}
 	        	
 	        	System.out.println("Client" + this.clientNumber + " finnished!");
+	        	outPV.println("Protocol finnished");
 	        	System.out.println("Client" + this.clientNumber + " took "+ (System.currentTimeMillis()- start)/1000 + " seconds");
 
 	        } catch (UnknownHostException e) {

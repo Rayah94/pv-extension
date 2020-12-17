@@ -7,6 +7,10 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.web3j.utils.Convert.Unit;
+
+import blockchain.Connector;
+
 public class PVServer implements Runnable {
 	int portNumber;
 	
@@ -34,8 +38,11 @@ public class PVServer implements Runnable {
                 while ((inputLine = in.readLine()) != null) {
                     outputLine = pvp.processInput(inputLine);
                     out.println(outputLine);
-                    if (outputLine.equals("Protocol finnished"))
+                    if (outputLine.equals("Protocol finnished")) {
+                    	Connector connector = pvp.getConnector();
+                    	System.out.println("Costs: " + connector.balance.subtract(connector.getBalance(Unit.GWEI)));
                         break;
+                    }
                 }
             } catch (IOException e) {
                 System.out.println("Exception caught when trying to listen on port "
