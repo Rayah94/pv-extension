@@ -1,4 +1,5 @@
 pragma solidity ^0.5.6;
+pragma experimental ABIEncoderV2;
 
 contract PVContract {
 
@@ -6,7 +7,7 @@ contract PVContract {
 	address[] public adresses;
 	uint32 public n;
 	
-	uint32 phase;
+	uint32 public phase;
 	uint calls;
 	uint call;
 	uint blocknumber;
@@ -87,8 +88,10 @@ contract PVContract {
 	        phase++;
 	        call = 0;
 	        blocknumber = block.number;
-	        if(phase == 2 || phase == 4) {
+	        if(phase == 2) {
 	            calls = n * t;
+	        } else if (phase == 4){
+	            calls = n * (t - 1);
 	        } else {
 	            calls = n;
 	        }

@@ -6,18 +6,17 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import blockchain.Connector;
 import blockchain.ContractHandler;
-import io.TranscriptWriter;
 
 public class PVProtocol {
 	
 	private static final int INIT = 0;
 	private static final int COMMIT_CHALLENGE = 1;
 	private static final int COMMIT_SEED = 2;
-	private static final int TRANSCRIPT_WRITING = 3;
-	private static final int OPEN_CHALLENGE = 4;
-	private static final int RETURN_CHALLENGE = 5;
-	private static final int OPEN_SEED = 6;
-	private static final int FINNISHED = 7;
+	//private static final int TRANSCRIPT_WRITING = 3;
+	private static final int OPEN_CHALLENGE = 3;
+	private static final int RETURN_CHALLENGE = 4;
+	private static final int OPEN_SEED = 5;
+	private static final int FINNISHED = 6;
 	
 	private static final String INPUT_DIVIDER = ";";
 	private static final String ARRAY_DIVIDER = ",";
@@ -27,7 +26,7 @@ public class PVProtocol {
 	private Connector connector;
 	private ContractHandler handler;
 	
-	private String transcriptPrefix;
+	//private String transcriptPrefix;
 	private int numberSessions;
 	private int currentRound;
 	
@@ -40,13 +39,20 @@ public class PVProtocol {
 		String result = "";
 		
 		switch(state) {
-		case INIT: result = init(theInput).toString(); state = COMMIT_CHALLENGE; break; // mnemonic, password, address, Transcript prefix, number sessions
+		case INIT: result = init(theInput).toString(); state = COMMIT_CHALLENGE; break; // mnemonic, password, address, number sessions
+		
 		case COMMIT_CHALLENGE: result = commitChallenge(theInput).toString(); state = COMMIT_SEED; break; // challenge (nur com(challenge))
-		case COMMIT_SEED: result = commitSeed(theInput).toString(); currentRound++; state = currentRound <= numberSessions ? COMMIT_SEED : TRANSCRIPT_WRITING; break; // session, seed (nur com(seed))
-		case TRANSCRIPT_WRITING: writeTranscript(theInput); result = "written"; state = OPEN_CHALLENGE; currentRound = 0; break; // session, message in a formatted way
-		case OPEN_CHALLENGE: result = openChallenge(theInput).toString(); state = RETURN_CHALLENGE; break; // challenge, secret
+		
+		case COMMIT_SEED: result = commitSeed(theInput).toString(); currentRound++; state = currentRound <= numberSessions ? COMMIT_SEED : OPEN_CHALLENGE; break; // session, seed (nur com(seed))
+		
+		//case TRANSCRIPT_WRITING: writeTranscript(theInput); result = "written"; state = OPEN_CHALLENGE; currentRound = 1; break; // session, message in a formatted way
+		
+		case OPEN_CHALLENGE: result = openChallenge(theInput).toString(); currentRound = 1; state = RETURN_CHALLENGE; break; // challenge, secret
+		
 		case RETURN_CHALLENGE: result = returnChallenge(); state = OPEN_SEED; break; // return challenge session e
-		case OPEN_SEED: result = openSeed(theInput).toString(); currentRound++; state = currentRound < numberSessions ? OPEN_SEED : FINNISHED; break; // session, seed, secret+
+		
+		case OPEN_SEED: result = openSeed(theInput).toString(); currentRound++; state = currentRound < numberSessions ? OPEN_SEED : FINNISHED; break; // session, seed, secret
+		
 		case FINNISHED: result = "Protocol finnished"; break;
 		}
 		
@@ -58,8 +64,7 @@ public class PVProtocol {
 		
 		connector = new Connector(inputs[0], inputs[1]);
 		handler = new ContractHandler(connector, inputs[2]);
-		transcriptPrefix = inputs[3];
-		numberSessions = Integer.parseInt(inputs[4]);
+		numberSessions = Integer.parseInt(inputs[3]);
 		
 		return handler.init();
 	}
@@ -74,6 +79,13 @@ public class PVProtocol {
 			commit[i] = Byte.parseByte(array[i]);
 		}
 		
+		try {
+			while(!handler.getContract().phase().send().equals(new BigInteger("1")))	{
+				Thread.sleep(100);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return handler.commitChallenge(commit);
 	}
 	
@@ -87,16 +99,24 @@ public class PVProtocol {
 			commit[i] = Byte.parseByte(array[i]);
 		}
 		
+		try {
+			while(!handler.getContract().phase().send().equals(new BigInteger("2")))	{
+				Thread.sleep(100);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		return handler.commitSeed(commit, new BigInteger(inputs[0]));
 	}
 	
-	private void writeTranscript(String input) {
+	/*private void writeTranscript(String input) {
 		String[] inputs = input.split(INPUT_DIVIDER);
 		
 		TranscriptWriter writer = new TranscriptWriter(transcriptPrefix + inputs[0]);
 		writer.writeTanscript(inputs[1]);
 		writer.close();
-	}
+	}*/
 	
 	private TransactionReceipt openChallenge(String input) {
 		String[] inputs = input.split(INPUT_DIVIDER);
@@ -108,14 +128,29 @@ public class PVProtocol {
 			secret[i] = Byte.parseByte(array[i]);
 		}
 		
+		try {
+			while(!handler.getContract().phase().send().equals(new BigInteger("3")))	{
+				Thread.sleep(100);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		return handler.openChallenge(inputs[0], secret);
 	}
 	
 	private String returnChallenge() {
+		try {
+			while(!handler.getContract().phase().send().equals(new BigInteger("4")))	{
+				Thread.sleep(100);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		String[] challenges = handler.getChallenges();
 		int result = 0;
 		for(int i = 0; i < challenges.length; i++) {
-			System.out.println(challenges[i]);
 			result += Integer.parseInt(challenges[i]);
 		}
 		result = result % numberSessions;
@@ -130,6 +165,14 @@ public class PVProtocol {
 		
 		for(int i = 0; i < array.length; i++) {
 			secret[i] = Byte.parseByte(array[i]);
+		}
+		
+		try {
+			while(!handler.getContract().phase().send().equals(new BigInteger("4")))	{
+				Thread.sleep(100);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
 		return handler.openSeed(inputs[1], secret, new BigInteger(inputs[0]));

@@ -12,6 +12,8 @@ contract Test {
     uint test;
 	mapping(address => Commitment[]) public challengeCommitments;
 	
+	bytes32 public hash;
+	
     
 	function commitChallenge(bytes32 commit, uint256 session) public{
 	    mapping(uint256 => Commitment) storage addressMapping = seedCommitments[msg.sender];
@@ -23,5 +25,7 @@ contract Test {
 	    test = session;
 	}
 	
-    
+	function keccak(bytes memory value) public {
+	    hash = keccak256(value);
+	}
 }

@@ -17,21 +17,21 @@ public class ContractHandler {
 	private BigInteger numberOfParticipants;
 	
 	
-	public ContractHandler(Connector connector, BigInteger numberOfParticipants, BigInteger sessions, BigInteger timeOffset) {
-		this.connector = connector;
-		try {
-			contract = connector.deployContract(numberOfParticipants, sessions, timeOffset);
-			this.numberOfParticipants = numberOfParticipants;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
 	public ContractHandler(Connector connector, String address) {
 		this.connector = connector;
 		contract = connector.loadContract(address);
 		try {
 			numberOfParticipants = contract.n().send();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public ContractHandler(Connector connector, BigInteger numberOfParticipants, BigInteger sessions, BigInteger timeOffset) {
+		this.connector = connector;
+		try {
+			contract = connector.deployContract(numberOfParticipants, sessions, timeOffset);
+			this.numberOfParticipants = numberOfParticipants;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

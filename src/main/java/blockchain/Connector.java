@@ -19,24 +19,22 @@ public class Connector {
 	private Credentials accountCredentials;
 	private Web3j web3j;
 	
-	public Connector() {
-		
-	}
-	
 	public Connector(String mnemonic, String password) {
 		initiate(mnemonic, password);
 	}
 	
+	public Connector() {
+		
+	}
+	
 	public void initiate(String mnemonic, String password) {
 		  //Derivation path wanted: // m/44'/60'/0'/0
-		  int[] derivationPath = {44 | Bip32ECKeyPair.HARDENED_BIT, 60 | Bip32ECKeyPair.HARDENED_BIT, 0 | Bip32ECKeyPair.HARDENED_BIT, 0,0};
-
+		  int[] derivationPath = {44 | Bip32ECKeyPair.HARDENED_BIT, 60 | Bip32ECKeyPair.HARDENED_BIT, 0 
+				  | Bip32ECKeyPair.HARDENED_BIT, 0,0};
 		  // Generate a BIP32 master keypair from the mnemonic phrase
 		  Bip32ECKeyPair masterKeypair = Bip32ECKeyPair.generateKeyPair(MnemonicUtils.generateSeed(mnemonic, password));
-
 		  // Derived the key using the derivation path
 		  Bip32ECKeyPair  derivedKeyPair = Bip32ECKeyPair.deriveKeyPair(masterKeypair, derivationPath);
-
 		  // Load the wallet for the derived key
 		  accountCredentials = Credentials.create(derivedKeyPair);
 		  web3j = Web3j.build(new HttpService("http://localhost:8545"));

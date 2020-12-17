@@ -1,5 +1,6 @@
 package commitment;
 
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -42,9 +43,11 @@ public class BasicHashCommitter implements Committer {
 	private byte[] calculateAdding(byte[] message, byte[] nonce) {
 		byte[] adding = new byte[message.length];
 		
-		for(int i = 0; i < message.length; i++) {
-			adding[i] = (byte) (message[i] + nonce[i % nonce.length]);
-		}
+		BigInteger msg = new BigInteger(message);
+		BigInteger non = new BigInteger(nonce);
+		
+		BigInteger add = msg.add(non);
+		adding = add.toByteArray();
 		
 		return adding;
 	}
