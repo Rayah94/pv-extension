@@ -42,6 +42,8 @@ public class PVClient implements Runnable {
 	private HashCommitment challengeCommitment;
 	private HashCommitment[] seedCommitments;
 	
+	private long start;
+	
 	public PVClient(int clientNumber, String mnemonic, String password, 
 			String contractAddress, int numberOfParticipants, int numberOfSessions, 
 			int portNumberPV, String hostNamePV, int portNumberMsg, String hostNameMsg) {
@@ -60,6 +62,7 @@ public class PVClient implements Runnable {
 	}
 	
 	public void run() {       
+			start = System.currentTimeMillis();
 			System.out.println("Client" + this.clientNumber + " starts");
 			
 	        // start own PVServer
@@ -150,7 +153,9 @@ public class PVClient implements Runnable {
 	        		transcripts[i] = transcript;
 	        	}
 	        	
-	        	/*// check transcript of others
+	        	outMsg.println("FINNISH");
+	        	/*
+	        	// check transcript of others
 	        	for(int i = 0; i < numberOfSessions; i++) {
 	        		// send own transcript
 	        		outMsg.println(this.clientNumber + INPUT_DIVIDER + transcripts[i]);
@@ -162,10 +167,8 @@ public class PVClient implements Runnable {
 	        				System.out.println("Client" + incoming[0] + "got: " + System.lineSeparator() + incoming[1]);
 	        			}
 	        		}
-	        	}*/
+	        	} */
 	        	System.out.println("Client" + this.clientNumber + " did transcripts");
-	        	// sign Transcript + session + contract Address
-	        	//TODO
 	        	
 	        	
 	        	// open challenge commitments
@@ -198,6 +201,7 @@ public class PVClient implements Runnable {
 	        	}
 	        	
 	        	System.out.println("Client" + this.clientNumber + " finnished!");
+	        	System.out.println("Client" + this.clientNumber + " took "+ (System.currentTimeMillis()- start)/1000 + " seconds");
 
 	        } catch (UnknownHostException e) {
 	            System.err.println("Don't know about host " + hostNamePV);

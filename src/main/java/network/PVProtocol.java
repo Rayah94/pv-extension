@@ -1,8 +1,10 @@
 package network;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.web3j.utils.Convert.Unit;
 
 import blockchain.Connector;
 import blockchain.ContractHandler;
@@ -29,6 +31,8 @@ public class PVProtocol {
 	//private String transcriptPrefix;
 	private int numberSessions;
 	private int currentRound;
+	
+	private BigDecimal balanceStart;
 	
 	public PVProtocol() {
 		super();
@@ -65,6 +69,8 @@ public class PVProtocol {
 		connector = new Connector(inputs[0], inputs[1]);
 		handler = new ContractHandler(connector, inputs[2]);
 		numberSessions = Integer.parseInt(inputs[3]);
+		
+		balanceStart = connector.getBalance(Unit.ETHER);
 		
 		return handler.init();
 	}
@@ -174,7 +180,10 @@ public class PVProtocol {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		TransactionReceipt result = handler.openSeed(inputs[1], secret, new BigInteger(inputs[0]));
 		
-		return handler.openSeed(inputs[1], secret, new BigInteger(inputs[0]));
+		System.out.println("Costs: " + balanceStart.subtract(connector.getBalance(Unit.ETHER)));
+		
+		return result;
 	}
 }

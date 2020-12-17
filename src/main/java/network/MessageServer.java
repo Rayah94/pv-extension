@@ -1,6 +1,7 @@
 package network;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -13,6 +14,8 @@ public class MessageServer implements Runnable {
 	private Socket[] clientSockets;
 	private PrintWriter[] outWriter;
 	private BufferedReader[] inReader;
+	
+	private int finnishes;
 	
 
 	public MessageServer(int[] portNumbers) {
@@ -48,7 +51,19 @@ public class MessageServer implements Runnable {
 			while(running) {
 				
 				for(int i = 0; i < portNumbers.length; i++) {
-					String input = inReader[i].readLine();
+					String input = "";
+					try {
+					input = inReader[i].readLine();
+					} catch(IOException closed) {
+						continue;
+					}
+					
+					if(input.equals("FINNISH")) {
+						outWriter[i].close();
+						inReader[i].close();
+						clientSockets[i].close();
+						serverSockets[i].close();
+					}
 					
 					for(int j = 0; j < portNumbers.length; j++) {
 						if(j != i) {
@@ -56,6 +71,7 @@ public class MessageServer implements Runnable {
 						}
 					}
 				}
+				
 				
 			}
 			
