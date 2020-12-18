@@ -15,8 +15,6 @@ public class MessageServer implements Runnable {
 	private PrintWriter[] outWriter;
 	private BufferedReader[] inReader;
 	
-	private int finnishes;
-	
 
 	public MessageServer(int[] portNumbers) {
 		this.portNumbers = portNumbers;

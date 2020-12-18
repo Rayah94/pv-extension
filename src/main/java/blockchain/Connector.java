@@ -56,11 +56,11 @@ public class Connector {
 	}
 	
 	public PVContract deployContract(BigInteger numberOfParticipants, BigInteger sessions, BigInteger timeOffset) throws Exception {
-		return PVContract.deploy(web3j, accountCredentials, new StaticGasProvider(new BigInteger("400000"), new BigInteger("8000000")), numberOfParticipants, sessions, timeOffset).send();
+		return PVContract.deploy(web3j, accountCredentials, new StaticGasProvider(new BigInteger("400000000"), new BigInteger("8000000")), numberOfParticipants, sessions, timeOffset).send();
 	}
 	
 	public PVContract loadContract(String address) {
-		return PVContract.load(address, web3j, accountCredentials, new StaticGasProvider(new BigInteger("400000"), new BigInteger("8000000")));
+		return PVContract.load(address, web3j, accountCredentials, new StaticGasProvider(new BigInteger("400000000"), new BigInteger("8000000")));
 	}
 	
 	public Credentials getAccountCredentials() {

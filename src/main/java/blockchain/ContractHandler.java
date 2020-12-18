@@ -40,14 +40,15 @@ public class ContractHandler {
 	public TransactionReceipt init() {
 		TransactionReceipt txReceipt = null;
 		try {
-			TransactionReceipt receipt = contract.init().send();
-			String txHash = receipt.getTransactionHash();
+			//TransactionReceipt receipt = contract.init().send();
+			txReceipt = contract.init().send();
+			//String txHash = receipt.getTransactionHash();
 			
-			TransactionReceiptProcessor receiptProcessor =
+			//TransactionReceiptProcessor receiptProcessor =
 	                new PollingTransactionReceiptProcessor(connector.getWeb3j(), TransactionManager.DEFAULT_POLLING_FREQUENCY,
 	                        TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
 
-			txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
+			//txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -57,14 +58,15 @@ public class ContractHandler {
 	public TransactionReceipt commitChallenge(byte[] commit) {
 		TransactionReceipt txReceipt = null;
 		try {
-			TransactionReceipt receipt = contract.commitChallenge(commit).send();
-			String txHash = receipt.getTransactionHash();
+			//TransactionReceipt receipt = contract.commitChallenge(commit).send();
+			txReceipt = contract.commitChallenge(commit).send();
+			//String txHash = receipt.getTransactionHash();
 			
-			TransactionReceiptProcessor receiptProcessor =
+			//TransactionReceiptProcessor receiptProcessor =
 	                new PollingTransactionReceiptProcessor(connector.getWeb3j(), TransactionManager.DEFAULT_POLLING_FREQUENCY,
 	                        TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
 
-			txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
+			//txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -74,14 +76,15 @@ public class ContractHandler {
 	public TransactionReceipt commitSeed(byte[] commit, BigInteger session) {
 		TransactionReceipt txReceipt = null;
 		try {
-			TransactionReceipt receipt = contract.commitSeed(commit, session).send();
-			String txHash = receipt.getTransactionHash();
+			//TransactionReceipt receipt = contract.commitSeed(commit, session).send();
+			txReceipt = contract.commitSeed(commit, session).send();
+			//String txHash = receipt.getTransactionHash();
 			
-			TransactionReceiptProcessor receiptProcessor =
+			//TransactionReceiptProcessor receiptProcessor =
 	                new PollingTransactionReceiptProcessor(connector.getWeb3j(), TransactionManager.DEFAULT_POLLING_FREQUENCY,
 	                        TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
 
-			txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
+			//txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -91,14 +94,15 @@ public class ContractHandler {
 	public TransactionReceipt openChallenge(String open, byte[] secret) {
 		TransactionReceipt txReceipt = null;
 		try {
-			TransactionReceipt receipt = contract.openChallenge(open, secret).send();
-			String txHash = receipt.getTransactionHash();
+			//TransactionReceipt receipt = contract.openChallenge(open, secret).send();
+			txReceipt = contract.openChallenge(open, secret).send();
+			//String txHash = receipt.getTransactionHash();
 			
-			TransactionReceiptProcessor receiptProcessor =
+			//TransactionReceiptProcessor receiptProcessor =
 	                new PollingTransactionReceiptProcessor(connector.getWeb3j(), TransactionManager.DEFAULT_POLLING_FREQUENCY,
 	                        TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
 
-			txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
+			//txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -108,14 +112,15 @@ public class ContractHandler {
 	public TransactionReceipt openSeed(String open, byte[] secret, BigInteger session) {
 		TransactionReceipt txReceipt = null;
 		try {
-			TransactionReceipt receipt = contract.openSeed(open, secret, session).send();
-			String txHash = receipt.getTransactionHash();
+			//TransactionReceipt receipt = contract.openSeed(open, secret, session).send();
+			txReceipt = contract.openSeed(open, secret, session).send();
+			//String txHash = receipt.getTransactionHash();
 			
-			TransactionReceiptProcessor receiptProcessor =
+			//TransactionReceiptProcessor receiptProcessor =
 	                new PollingTransactionReceiptProcessor(connector.getWeb3j(), TransactionManager.DEFAULT_POLLING_FREQUENCY,
 	                        TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
 
-			txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
+			//txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
