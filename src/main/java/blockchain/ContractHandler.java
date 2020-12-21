@@ -27,6 +27,13 @@ public class ContractHandler {
 		}
 	}
 	
+	/**
+	 * Builds a new Contract handler which directly deploys a new PVContract to the local blockchain
+	 * @param connector connector object
+	 * @param numberOfParticipants
+	 * @param sessions
+	 * @param timeOffset
+	 */
 	public ContractHandler(Connector connector, BigInteger numberOfParticipants, BigInteger sessions, BigInteger timeOffset) {
 		this.connector = connector;
 		try {
@@ -142,6 +149,10 @@ public class ContractHandler {
 		return challenges;
 	}
 	
+	/**
+	 * Returns the contract address of the deployed contract
+	 * @return address of contract
+	 */
 	public String getContractAddress() {
 		return contract.getContractAddress();
 	}

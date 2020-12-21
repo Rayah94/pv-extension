@@ -16,6 +16,10 @@ public class MessageServer implements Runnable {
 	private BufferedReader[] inReader;
 	
 
+	/**
+	 * Builds a new msg Server listening to the ports and accepting the first connection
+	 * @param portNumbers array of the ports
+	 */
 	public MessageServer(int[] portNumbers) {
 		this.portNumbers = portNumbers;
 		serverSockets = new ServerSocket[portNumbers.length];

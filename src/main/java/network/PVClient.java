@@ -44,6 +44,19 @@ public class PVClient implements Runnable {
 	
 	private long start;
 	
+	/**
+	 * 
+	 * @param clientNumber Number of the client
+	 * @param mnemonic the mnemonic
+	 * @param password password
+	 * @param contractAddress the contract address on the ledger
+	 * @param numberOfParticipants 
+	 * @param numberOfSessions
+	 * @param portNumberPV port number for the PV Server
+	 * @param hostNamePV host name for the PV Server can be null if localhost
+	 * @param portNumberMsg port number for the msg server 
+	 * @param hostNameMsg host name for the msg server can be null if localhost
+	 */
 	public PVClient(int clientNumber, String mnemonic, String password, 
 			String contractAddress, int numberOfParticipants, int numberOfSessions, 
 			int portNumberPV, String hostNamePV, int portNumberMsg, String hostNameMsg) {

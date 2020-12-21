@@ -16,17 +16,17 @@ public class Main {
 	public static void main(String[] args) {
 		
 		String password = "1234";
-		String mnemonic = "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat"; // 0x2fe9f56859cf9f71db24ca975ebb43dc8a551b12
-		String mnemonic1 = "maple cake sugar pudding cream honey rich smooth crumble sweet treat candy"; // 0x7199d0a4b96d83250e86f0e09e8b2007caa14bd9
-		String mnemonic2 = "cake sugar pudding cream honey rich smooth crumble sweet treat candy maple"; // 0xf879ca17be1c3f696a7feb5845f78055163e02f8
-		String mnemonic3 = "sugar pudding cream honey rich smooth crumble sweet treat candy maple cake"; // 0x15fd708972fa9af91f86f0c36f7930f1f234730d
-		String mnemonic4 = "pudding cream honey rich smooth crumble sweet treat candy maple cake sugar"; // 0x42158522f0059205c09a9bb603199b37e38a2b2f
-		String mnemonic5 = "cream honey rich smooth crumble sweet treat candy maple cake sugar pudding"; // 0xa70ed10efa1465c4f8ae2e5421866bf9a0546b0d
-		String mnemonic6 = "honey rich smooth crumble sweet treat candy maple cake sugar pudding cream"; // 0x5afb97afd1be809a2ec719e90b9cec6b4a99cb7c
-		String mnemonic7 = "rich smooth crumble sweet treat candy maple cake sugar pudding cream honey"; // 0x5a48f615d3bc3b27323f9e0354f85669e18a1a7c
-		String mnemonic8 = "smooth crumble sweet treat candy maple cake sugar pudding cream honey rich"; // 0x21295ecbfac2e401b8cc13251be1966b081ad51b
-		String mnemonic9 = "crumble sweet treat candy maple cake sugar pudding cream honey rich smooth "; // 0x21eb4dc8c65ccf10f235961bbc4565c442e3aee1
-		String mnemonic10 = "sweet treat candy maple cake sugar pudding cream honey rich smooth crumble"; // 0xdf080fee0de40c24181b8e523923b1d7f83652de
+		String mnemonic = "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat"; // 0: 0x2fe9f56859cf9f71db24ca975ebb43dc8a551b12
+		String mnemonic1 = "maple cake sugar pudding cream honey rich smooth crumble sweet treat candy"; // 1: 0x7199d0a4b96d83250e86f0e09e8b2007caa14bd9
+		String mnemonic2 = "cake sugar pudding cream honey rich smooth crumble sweet treat candy maple"; // 2: 0xf879ca17be1c3f696a7feb5845f78055163e02f8
+		String mnemonic3 = "sugar pudding cream honey rich smooth crumble sweet treat candy maple cake"; // 3: 0x15fd708972fa9af91f86f0c36f7930f1f234730d
+		String mnemonic4 = "pudding cream honey rich smooth crumble sweet treat candy maple cake sugar"; // 4: 0x42158522f0059205c09a9bb603199b37e38a2b2f
+		String mnemonic5 = "cream honey rich smooth crumble sweet treat candy maple cake sugar pudding"; // 5: 0xa70ed10efa1465c4f8ae2e5421866bf9a0546b0d
+		String mnemonic6 = "honey rich smooth crumble sweet treat candy maple cake sugar pudding cream"; // 6: 0x5afb97afd1be809a2ec719e90b9cec6b4a99cb7c
+		String mnemonic7 = "rich smooth crumble sweet treat candy maple cake sugar pudding cream honey"; // 7: 0x5a48f615d3bc3b27323f9e0354f85669e18a1a7c
+		String mnemonic8 = "smooth crumble sweet treat candy maple cake sugar pudding cream honey rich"; // 8: 0x21295ecbfac2e401b8cc13251be1966b081ad51b
+		String mnemonic9 = "crumble sweet treat candy maple cake sugar pudding cream honey rich smooth "; // 9: 0x21eb4dc8c65ccf10f235961bbc4565c442e3aee1
+		String mnemonic10 = "sweet treat candy maple cake sugar pudding cream honey rich smooth crumble"; // 10: 0xdf080fee0de40c24181b8e523923b1d7f83652de
 		Connector connector = new Connector(mnemonic, password);
 		
 		
@@ -40,7 +40,7 @@ public class Main {
 		
 		String address = handler.getContractAddress();
 		
-		int[] msgPorts = {4445, 4447, 4449};
+		int[] msgPorts = {4445, 4447, 4449/*, 4451, 4453, 4455, 4457, 4459, 4461, 4463*/};
 		
 		Runnable client1 = new PVClient(0, mnemonic1, password, address, 3, 100, 4444, null, 4445, null);
 		Runnable client2 = new PVClient(1, mnemonic2, password, address, 3, 100, 4446, null, 4447, null);

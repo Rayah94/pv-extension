@@ -22,6 +22,11 @@ public class Connector {
 	
 	public BigDecimal balance;
 	
+	/**
+	 * Builds a Object to handle the account credentials for the given mnemonic and password
+	 * @param mnemonic
+	 * @param password
+	 */
 	public Connector(String mnemonic, String password) {
 		initiate(mnemonic, password);
 		balance = this.getBalance(Unit.GWEI);
